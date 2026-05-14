@@ -30,7 +30,6 @@ enum {
     VIEW_DEVICES,
     VIEW_ACTIONS,
     VIEW_NAME_INPUT,
-    VIEW_ALL_ACTIONS,
     VIEW_CONFIRM_DELETE,
     VIEW_IDENTITY,
 };
@@ -44,7 +43,6 @@ typedef struct {
     IohcCaptureView* capture_view;
     IohcDeviceList* device_list;
     IohcDeviceActions* device_actions;
-    IohcDeviceActions* all_actions;
     TextInput* name_input;
     char name_buf[IOHC_DEVICE_NAME_MAX + 1];
     DialogEx* confirm_dialog;
@@ -216,20 +214,6 @@ static void perform_device_action(IohcApp* app, IohcDevAction action) {
     notification_message(app->notifications, ok ? &sequence_blink_green_100 : &sequence_blink_red_100);
 }
 
-// "All shutters" action: use the FAP's global identity (Mode A — assumes
-// the user has paired the global identity with the motors they want to
-// blast). Future: iterate per-device identities for Mode B.
-static void perform_global_action(IohcApp* app, IohcDevAction action) {
-    notification_message(app->notifications, &sequence_blink_blue_100);
-    bool ok;
-    if(action == IohcDevActionPair) {
-        ok = iohc_tx_send_pair_global(&app->identity);
-    } else {
-        ok = iohc_tx_send_button_global(&app->identity, btn_for(action));
-    }
-    notification_message(app->notifications, ok ? &sequence_blink_green_100 : &sequence_blink_red_100);
-}
-
 static void on_confirm_delete(DialogExResult result, void* ctx) {
     IohcApp* app = (IohcApp*)ctx;
     if(result == DialogExResultRight) {
@@ -265,13 +249,6 @@ static void on_device_action(IohcDevAction action, void* ctx) {
     perform_device_action(app, action);
 }
 
-static void on_all_action(IohcDevAction action, void* ctx) {
-    IohcApp* app = (IohcApp*)ctx;
-    if(action == IohcDevActionDelete) return;  // n/a for broadcast
-    perform_global_action(app, action);
-    // Stay on the All-shutters menu after a broadcast.
-}
-
 static void on_device_selected(uint8_t index, void* ctx) {
     IohcApp* app = (IohcApp*)ctx;
     if(index >= iohc_device_book_count(app->book)) return;
@@ -295,16 +272,6 @@ static void on_main_menu(IohcMainMenuChoice choice, void* ctx) {
             iohc_device_list_refresh(app->device_list, app->book);
             view_dispatcher_send_custom_event(app->view_dispatcher, VIEW_DEVICES);
             break;
-        case IohcMainMenuAllShutters:
-            iohc_device_actions_set_label(app->all_actions, "All shutters (broadcast)");
-            view_dispatcher_send_custom_event(app->view_dispatcher, VIEW_ALL_ACTIONS);
-            break;
-        case IohcMainMenuPair: {
-            notification_message(app->notifications, &sequence_blink_blue_100);
-            bool ok = iohc_tx_send_pair_global(&app->identity);
-            notification_message(app->notifications, ok ? &sequence_blink_green_100 : &sequence_blink_red_100);
-            break;
-        }
         case IohcMainMenuSniffer:
             view_dispatcher_send_custom_event(app->view_dispatcher, VIEW_SNIFFER);
             break;
@@ -399,7 +366,6 @@ int32_t iohc_app_main(void* p) {
     app->device_list = iohc_device_list_alloc();
     iohc_device_list_set_on_select(app->device_list, on_device_selected, app);
     app->device_actions = iohc_device_actions_alloc(on_device_action, app);
-    app->all_actions = iohc_device_actions_alloc(on_all_action, app);
     app->name_input = text_input_alloc();
     app->confirm_dialog = dialog_ex_alloc();
     dialog_ex_set_result_callback(app->confirm_dialog, on_confirm_delete);
@@ -420,7 +386,6 @@ int32_t iohc_app_main(void* p) {
     View* v_capture  = iohc_capture_view_get_view(app->capture_view);
     View* v_devices  = iohc_device_list_get_view(app->device_list);
     View* v_actions  = iohc_device_actions_get_view(app->device_actions);
-    View* v_all      = iohc_device_actions_get_view(app->all_actions);
     View* v_name     = text_input_get_view(app->name_input);
     View* v_confirm  = dialog_ex_get_view(app->confirm_dialog);
     View* v_identity = iohc_identity_view_get_view(app->identity_view);
@@ -431,7 +396,6 @@ int32_t iohc_app_main(void* p) {
     view_set_previous_callback(v_capture,  back_to_main);
     view_set_previous_callback(v_devices,  back_to_main);
     view_set_previous_callback(v_actions,  back_to_devices);
-    view_set_previous_callback(v_all,      back_to_main);
     view_set_previous_callback(v_name,     back_to_capture);
     view_set_previous_callback(v_confirm,  back_to_actions);
     view_set_previous_callback(v_identity, back_to_main);
@@ -441,7 +405,6 @@ int32_t iohc_app_main(void* p) {
     view_dispatcher_add_view(app->view_dispatcher, VIEW_CAPTURE,        v_capture);
     view_dispatcher_add_view(app->view_dispatcher, VIEW_DEVICES,        v_devices);
     view_dispatcher_add_view(app->view_dispatcher, VIEW_ACTIONS,        v_actions);
-    view_dispatcher_add_view(app->view_dispatcher, VIEW_ALL_ACTIONS,    v_all);
     view_dispatcher_add_view(app->view_dispatcher, VIEW_NAME_INPUT,     v_name);
     view_dispatcher_add_view(app->view_dispatcher, VIEW_CONFIRM_DELETE, v_confirm);
     view_dispatcher_add_view(app->view_dispatcher, VIEW_IDENTITY,       v_identity);
@@ -469,7 +432,6 @@ int32_t iohc_app_main(void* p) {
     view_dispatcher_remove_view(app->view_dispatcher, VIEW_CAPTURE);
     view_dispatcher_remove_view(app->view_dispatcher, VIEW_DEVICES);
     view_dispatcher_remove_view(app->view_dispatcher, VIEW_ACTIONS);
-    view_dispatcher_remove_view(app->view_dispatcher, VIEW_ALL_ACTIONS);
     view_dispatcher_remove_view(app->view_dispatcher, VIEW_NAME_INPUT);
     view_dispatcher_remove_view(app->view_dispatcher, VIEW_CONFIRM_DELETE);
     view_dispatcher_remove_view(app->view_dispatcher, VIEW_IDENTITY);
@@ -479,7 +441,6 @@ int32_t iohc_app_main(void* p) {
     iohc_capture_view_free(app->capture_view);
     iohc_device_list_free(app->device_list);
     iohc_device_actions_free(app->device_actions);
-    iohc_device_actions_free(app->all_actions);
     text_input_free(app->name_input);
     dialog_ex_free(app->confirm_dialog);
     iohc_identity_view_free(app->identity_view);

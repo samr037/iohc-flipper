@@ -130,24 +130,3 @@ bool iohc_tx_send_pair_dev(IohcDeviceBook* book, uint8_t index) {
                                    seq39, seq30, seq_stop, seq_down);
 }
 
-// ---------- global identity (legacy / "All shutters" Mode A) ----------
-
-bool iohc_tx_send_button_global(IohcIdentity* id, uint8_t button_code) {
-    uint16_t seq = iohc_identity_next_seq(id);
-    // Global "All shutters" channel: default to Somfy since the global
-    // identity pre-dates per-device vendor tracking and was paired against
-    // Somfy motors. Users wanting Velux should use saved-shutter entries.
-    return send_button_with_identity(id, IOHC_VENDOR_SOMFY, seq, button_code);
-}
-
-bool iohc_tx_send_pair_global(IohcIdentity* id) {
-    uint16_t seq39    = iohc_identity_next_seq(id);
-    uint16_t seq30    = iohc_identity_next_seq(id);
-    uint16_t seq_stop = iohc_identity_next_seq(id);
-    uint16_t seq_down = iohc_identity_next_seq(id);
-    // Global "All shutters" channel: legacy Somfy defaults. The man_id 0x02
-    // and vendor 0x43 are the bytes paired motors learned with; we keep
-    // them stable for backwards compatibility with the global identity.
-    return send_pair_with_identity(id, IOHC_VENDOR_SOMFY, /*man_id=*/0x02,
-                                   seq39, seq30, seq_stop, seq_down);
-}

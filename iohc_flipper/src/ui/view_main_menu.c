@@ -18,12 +18,10 @@ IohcMainMenu* iohc_main_menu_alloc(IohcMainMenuCallback cb, void* ctx) {
     m->cb = cb;
     m->ctx = ctx;
     submenu_set_header(m->submenu, "iohc remote");
-    submenu_add_item(m->submenu, "Sniff & capture",  IohcMainMenuCapture,     on_select, m);
-    submenu_add_item(m->submenu, "Saved shutters",   IohcMainMenuDevices,     on_select, m);
-    submenu_add_item(m->submenu, "All shutters",     IohcMainMenuAllShutters, on_select, m);
-    submenu_add_item(m->submenu, "Pair to motor",    IohcMainMenuPair,        on_select, m);
-    submenu_add_item(m->submenu, "Live sniffer",     IohcMainMenuSniffer,     on_select, m);
-    submenu_add_item(m->submenu, "Identity",         IohcMainMenuIdentity,    on_select, m);
+    submenu_add_item(m->submenu, "Sniff & capture",  IohcMainMenuCapture,  on_select, m);
+    submenu_add_item(m->submenu, "Saved shutters",   IohcMainMenuDevices,  on_select, m);
+    submenu_add_item(m->submenu, "Live sniffer",     IohcMainMenuSniffer,  on_select, m);
+    submenu_add_item(m->submenu, "Identity",         IohcMainMenuIdentity, on_select, m);
     return m;
 }
 

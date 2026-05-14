@@ -5,8 +5,6 @@
 typedef enum {
     IohcMainMenuCapture = 1,
     IohcMainMenuDevices = 2,
-    IohcMainMenuAllShutters = 3,
-    IohcMainMenuPair = 4,
     IohcMainMenuSniffer = 5,
     IohcMainMenuIdentity = 6,
 } IohcMainMenuChoice;

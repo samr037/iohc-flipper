@@ -8,8 +8,8 @@
 // the FAP treats vendor as an opaque pass-through, no per-vendor code paths.
 //   0x43 → Somfy   (Phase 2/3 captures)
 //   0x61 → Velux   (Phase 5.6 captures)
-// SOMFY default is used for the global identity in "All shutters" mode and
-// for v1 → v2 storage migration.
+// These named constants exist only for the v1 → v2 migration fallback and
+// for the UI labels. TX code reads dev->vendor directly.
 #define IOHC_VENDOR_SOMFY 0x43
 #define IOHC_VENDOR_VELUX 0x61
 
@@ -30,9 +30,3 @@ bool iohc_tx_send_button_dev(IohcDeviceBook* book, uint8_t index, uint8_t button
 // broadcast) using a saved shutter's identity. Targets whichever motor is
 // currently in PROG-accept mode.
 bool iohc_tx_send_pair_dev(IohcDeviceBook* book, uint8_t index);
-
-// "All shutters" / global-identity variants. Use the FAP's global identity
-// for backwards compatibility — useful for users who paired the global
-// identity with multiple motors and want a single "blast all" channel.
-bool iohc_tx_send_button_global(IohcIdentity* id, uint8_t button_code);
-bool iohc_tx_send_pair_global(IohcIdentity* id);
