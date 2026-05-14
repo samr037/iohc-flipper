@@ -1,0 +1,18 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Upstream RE references (heavy, not ours)
+refs/
+
+# Flipper build artifacts
+iohc_flipper/dist/
+iohc_flipper/build/
+iohc_flipper/.vscode/
+.ufbt/
+
+# OS / editor junk
+.DS_Store
+*.swp
+*~
