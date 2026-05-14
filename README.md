@@ -241,13 +241,58 @@ See [ROADMAP.md](ROADMAP.md) for details.
 
 ---
 
+## License
+
+iohc-flipper is **dual-licensed** at your option under:
+
+- the [MIT License](LICENSE) — for the original code in this repository
+- the [Apache License, Version 2.0](LICENSE-APACHE) — for the portions
+  derived from upstream Apache-2.0 sources (see [NOTICE](NOTICE))
+
+Files containing derived code carry an `SPDX-License-Identifier: MIT OR
+Apache-2.0` header. Everything else is MIT-only by default.
+
 ## Sources & credits
 
-- [Velocet/iown-homecontrol](https://github.com/Velocet/iown-homecontrol) — io-homecontrol RE umbrella project.
-- [rspaargaren/iown-home](https://github.com/rspaargaren/iown-home) — definitive cmd 0x30 frame structure (`enc_key[16] man_id ?? seq[2]`).
-- [DarkFlippers/unleashed-firmware](https://github.com/DarkFlippers/unleashed-firmware) — host firmware.
-- Velux KLI 310/311/312/313 user manual — pages 4, 10, 15 — official pairing procedure.
-- Smoove Origin IO and Velux KLI 313 remote captures, on the project owner's own installation.
+**Code reused (Apache 2.0 — proper attribution in [NOTICE](NOTICE))**
+
+- [rspaargaren/iown-homecontrol-esp32sx1276](https://github.com/rspaargaren/iown-homecontrol-esp32sx1276)
+  — `compute_checksum()` in our `hmac_1w.c` is a verbatim port of their
+  `computeChecksum()`; `iohc_wrap_install_key()` in our `key_encrypt.c`
+  is an algorithmic port of their `encrypt_1W_key()`; the public iohc
+  `transfer_key` constant comes from line 47 of the same file.
+- [rspaargaren/iown-home](https://github.com/rspaargaren/iown-home) —
+  definitive cmd 0x30 frame structure (`enc_key[16] man_id ?? seq[2]`),
+  documented in their `docs/commands.md`.
+
+**Concept references (no code reused)**
+
+- [Velocet/iown-homecontrol](https://github.com/Velocet/iown-homecontrol)
+  (CC0) — io-homecontrol RE umbrella project. General protocol orientation
+  and command-ID reference.
+- [merbanan/rtl_433](https://github.com/merbanan/rtl_433) (GPL-2.0+) —
+  conceptual reference for sub-GHz sync alignment when the hardware sync
+  detector locks one byte early. Independent reimplementation for CC1101.
+
+**Host firmware**
+
+- [DarkFlippers/unleashed-firmware](https://github.com/DarkFlippers/unleashed-firmware)
+  (GPL-3.0) — Flipper Zero firmware. iohc-flipper is a dynamically-loaded
+  user app (FAP), treated by the Flipper community as a library-boundary
+  separation that permits permissive licenses on FAPs.
+
+**Manufacturer documentation**
+
+- Velux KLI 310/311/312/313 user manual ([PDF](https://www.velux.co.nz/~/media/marketing/ca/fr/integra/454416-2018-08%20integra%20support%20ca-fre.pdf))
+  — pages 4, 10, 15 — official pairing procedure (REGLAGE / APPAIRAGE
+  buttons, STOP+DOWN follow-up).
+
+**On-air captures**
+
+- Smoove Origin IO (Somfy) and KLI 313 (Velux) remotes, on the project
+  owner's own installation. Captured frames live in `docs/*.csv` (button
+  frames only; install-key-bearing cmd 0x30 captures are excluded from
+  the public branch).
 
 ---
 

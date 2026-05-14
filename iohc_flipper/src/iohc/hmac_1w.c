@@ -1,3 +1,8 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//
+// Contains code derived from rspaargaren/iown-homecontrol-esp32sx1276
+// (Apache 2.0). See NOTICE for details.
+
 #include "hmac_1w.h"
 #include "aes.h"
 #include <string.h>

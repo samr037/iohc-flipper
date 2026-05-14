@@ -1,0 +1,60 @@
+iohc-flipper
+Copyright (c) 2026 Samy Jacquet
+
+This product includes software derived from third-party io-homecontrol
+reverse-engineering projects. The primary license for iohc-flipper is MIT
+(see LICENSE). Portions derived from Apache-2.0-licensed sources are
+governed by the terms of the Apache License, Version 2.0 (see
+LICENSE-APACHE).
+
+--------------------------------------------------------------------------
+Derived from rspaargaren/iown-homecontrol-esp32sx1276 (Apache 2.0)
+https://github.com/rspaargaren/iown-homecontrol-esp32sx1276
+--------------------------------------------------------------------------
+
+  * iohc_flipper/src/iohc/hmac_1w.c
+    `compute_checksum()` is a verbatim port to C of `computeChecksum()`
+    from src/iohcCryptoHelpers.cpp:92-102.
+
+  * iohc_flipper/src/iohc/key_encrypt.c
+    `iohc_wrap_install_key()` is an algorithmic port of `encrypt_1W_key()`
+    from src/iohcCryptoHelpers.cpp. The public iohc transfer_key constant
+    `34c3466ed88f4e8e16aa473949884373` originates from line 47 of the same
+    file.
+
+  * Protocol field structure documentation for cmd 0x30 (1W install-key
+    broadcast) — its 16-byte enc_key + 1-byte man_id + 1-byte data + 2-byte
+    seq layout — comes from docs/commands.md in the related
+    rspaargaren/iown-home documentation project.
+
+--------------------------------------------------------------------------
+Other acknowledged sources (no code reused, concept / documentation only)
+--------------------------------------------------------------------------
+
+  * Velocet/iown-homecontrol (CC0 1.0 public domain)
+    https://github.com/Velocet/iown-homecontrol
+    General protocol documentation and io-homecontrol command-ID reference.
+    No attribution required by license; cited here as good practice.
+
+  * merbanan/rtl_433 (GPL-2.0-or-later)
+    https://github.com/merbanan/rtl_433
+    Conceptual reference for sub-GHz sync alignment when the hardware sync
+    detector locks one byte early. No code copied — algorithm reimplemented
+    independently for the CC1101 path.
+
+  * DarkFlippers/unleashed-firmware (GPL-3.0)
+    https://github.com/DarkFlippers/unleashed-firmware
+    Host firmware. iohc-flipper is a dynamically-loaded user application
+    (FAP), not statically linked against the firmware. The Flipper
+    community treats FAP-to-firmware as a library boundary and permits
+    permissive licenses for FAPs.
+
+--------------------------------------------------------------------------
+Upstream manufacturer documentation cited for protocol decisions
+--------------------------------------------------------------------------
+
+  * Velux KLI 310/311/312/313 user manual (VAS 454416-2018-08)
+    https://www.velux.co.nz/~/media/marketing/ca/fr/integra/454416-2018-08%20integra%20support%20ca-fre.pdf
+    Cited for: pairing flow (page 10), remote-to-remote pairing using
+    REGLAGE and APPAIRAGE buttons (page 15), and the requirement for a
+    STOP+DOWN follow-up within 3 seconds of APPAIRAGE.
