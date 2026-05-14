@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/branding/logo_800.png" alt="iohc-flipper" width="800">
+</p>
+
 # iohc-flipper
 
 A Flipper Zero FAP that speaks **io-homecontrol** — the 868 MHz proprietary
