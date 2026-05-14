@@ -89,7 +89,7 @@ These are easy to break. See PROGRESS.md "code-level gotchas" for the full set.
 | Field | Somfy | Velux | Where |
 |---|---|---|---|
 | Button frame vendor byte (payload[1] of cmd 0x00) | `0x43` | `0x61` | captured from sniff, stored in `IohcDevice.vendor` |
-| Pair frame `manufacturer_id` (byte[25] of cmd 0x30) | `0x02` | `0x01` | `man_id_for_vendor()` in `tx_runner.c` |
+| Pair frame `manufacturer_id` (byte[25] of cmd 0x30) | `0x02` | `0x01` | per-device `IohcDevice.man_id` (devices.bin v3); capture-time fallback `iohc_man_id_default_for_vendor()` in `device_book.c` |
 | Pair frame dst (cmd 0x30) | broadcast `00 00 3F` | type codes `00 00 BF` / `00 00 FF` / `00 03 7F` | `send_pair_with_identity()` loops over all 4 dsts |
 | STOP+DOWN follow-up | harmless (single STOP, single DOWN) | required per KLI 313 page 10 step 5 | `send_pair_with_identity()` appends always |
 
@@ -132,14 +132,19 @@ p.rpc_app_start('/ext/apps/Sub-GHz/iohc_flipper.fap', '')
 [19..20] seq             (BE)
 ```
 
-### `devices.bin` v2 (50 bytes per entry, after 6-byte header)
+### `devices.bin` v3 (51 bytes per entry, after 6-byte header)
 ```
-header:  magic 'IHCD' [4]  version=2 [1]  count [1]
-entry:   name[25]  motor_addr[3]  src[3]  install_key[16]  seq_be[2]  vendor[1]
+header:  magic 'IHCD' [4]  version=3 [1]  count [1]
+entry:   name[25]  motor_addr[3]  src[3]  install_key[16]  seq_be[2]  vendor[1]  man_id[1]
 ```
 
-v1 entries (49 bytes, no `vendor`) auto-migrate to v2 on load with
-`vendor = 0x43 (Somfy)` default — see comment in `device_book.c`.
+Older versions auto-migrate on load:
+- v1 (49 bytes, no vendor/man_id) → defaults to Somfy
+- v2 (50 bytes, vendor but no man_id) → man_id derived from vendor via
+  `iohc_man_id_default_for_vendor()`
+
+After migration the file is re-saved in v3 layout so subsequent loads are
+fast. See `device_book.c`.
 
 ## Conventions
 

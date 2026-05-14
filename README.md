@@ -174,10 +174,16 @@ parts are elsewhere (see below).
 | Pair frame `dst` | cmd 0x30 dst | broadcast `00 00 3F` | type-codes `00 00 BF` (window) / `00 00 FF` (shutter) / `00 03 7F` (other) |
 | STOP+DOWN follow-up after rings | within 3 s | unused (harmless) | **required** |
 
-Both bytes are mapped from the captured `vendor` byte at TX time via
-`man_id_for_vendor()` in `src/state/tx_runner.c`. The system is vendor-
-agnostic by storage and TX — we only branch on protocol-level fields that
-must differ.
+Both `vendor` and `man_id` are stored **per device** as raw observed wire
+bytes (`devices.bin` v3, since Phase 6c). The TX path reads them verbatim
+— no vendor enums, no mapping function in the hot path. `vendor` comes
+from a sniffed cmd 0x00 button frame; `man_id` from a sniffed cmd 0x30
+pair frame, with a capture-time fallback (`iohc_man_id_default_for_vendor`)
+deriving it from `vendor` when we haven't seen a pair frame on-air.
+
+This matches the rspaargaren/iown-homecontrol-esp32sx1276 architecture
+([iohcRemote1W.cpp:221](https://github.com/rspaargaren/iown-homecontrol-esp32sx1276/blob/master/src/iohcRemote1W.cpp))
+— the canonical OSS approach.
 
 ### Privacy by HMAC, not by address
 
