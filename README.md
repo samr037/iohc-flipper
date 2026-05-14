@@ -35,17 +35,14 @@ Built as interop research on hardware I own, under EU 2009/24/EC.
 
 ## What it does
 
-| Main menu | Sniff & Capture |
-|---|---|
-| ![Main menu](docs/screenshots/01_main_menu.png) | ![Sniff](docs/screenshots/02_sniff_capture_empty.png) |
+| Main menu | Sniff & Capture | Live sniffer |
+|---|---|---|
+| ![Main menu](docs/screenshots/01_main_menu.png) | ![Sniff](docs/screenshots/02_sniff_capture_empty.png) | ![Sniffer](docs/screenshots/05_live_sniffer.png) |
 
-| Saved shutters | Device actions |
-|---|---|
-| ![Saved](docs/screenshots/03_saved_shutters.png) | ![Actions](docs/screenshots/04_device_actions.png) |
-
-| Live sniffer | Identity |
-|---|---|
-| ![Sniffer](docs/screenshots/05_live_sniffer.png) | ![Identity](docs/screenshots/06_identity.png) |
+> *Screenshots of the Saved shutters list, per-device actions, and Identity
+> view aren't included in the public repo — they show the project owner's
+> installation's remote IDs and global install_key. Easy to reproduce on
+> your own hardware once you sniff a remote.*
 
 ### Sniff & Capture
 
