@@ -35,19 +35,23 @@ Built as interop research on hardware I own, under EU 2009/24/EC.
 
 ## What it does
 
+| Main menu | Sniff & Capture |
+|---|---|
+| ![Main menu](docs/screenshots/01_main_menu.png) | ![Sniff](docs/screenshots/02_sniff_capture_empty.png) |
+
+| Saved shutters | Device actions |
+|---|---|
+| ![Saved](docs/screenshots/03_saved_shutters.png) | ![Actions](docs/screenshots/04_device_actions.png) |
+
+| Live sniffer | Identity |
+|---|---|
+| ![Sniffer](docs/screenshots/05_live_sniffer.png) | ![Identity](docs/screenshots/06_identity.png) |
+
 ### Sniff & Capture
 
 Press a button on any io-homecontrol remote near the Flipper. The app
 indexes frames by source remote, auto-detects the vendor byte from button
 frames (`0x43` Somfy, `0x61` Velux), and offers to save a named entry.
-
-```
-Remote 1/1
-src 39:F9:0D (#28)
-vendor Velux 0x61
-rssi -52 dBm
-                 [ Save ]
-```
 
 ### Per-shutter identity isolation
 
